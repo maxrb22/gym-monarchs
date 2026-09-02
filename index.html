@@ -1,0 +1,590 @@
+<title>Monarchs Kraftboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Inter', 'sans-serif'] },
+        colors: {
+          brand: { 50: '#eef4ff', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' },
+          accent: { green: '#22c55e', yellow: '#eab308', red: '#ef4444', purple: '#a855f7' }
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  html { background: #020617; }
+  body { background: #020617; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0f172a; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+  .icon { width: 1em; height: 1em; display: inline-block; vertical-align: -0.14em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  ::placeholder { color: #64748b; }
+</style>
+
+<div class="h-full font-sans antialiased flex flex-col min-h-screen bg-slate-950 text-slate-100">
+
+  <!-- ICON SPRITE (referenced via <use>) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <g id="ic-dumbbell"><path d="M4 9v6M20 9v6M7 7v10M17 7v10M9 12h6"/></g>
+      <g id="ic-refresh"><path d="M4 4v5h5M20 20v-5h-5"/><path d="M5.5 9A7 7 0 0 1 19 11M18.5 15A7 7 0 0 1 5 13"/></g>
+      <g id="ic-check-circle"><circle cx="12" cy="12" r="9"/><path d="M8.3 12.3l2.4 2.4L15.7 9.3"/></g>
+      <g id="ic-users"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17.3" cy="9" r="2.3"/><path d="M15.7 14.2c2.6.4 4.5 2.6 4.5 5.3"/></g>
+      <g id="ic-trending"><path d="M4 16l5-5 3 3 6-7"/><path d="M14 6h4v4"/></g>
+      <g id="ic-trophy"><path d="M8 4h8v4a4 4 0 0 1-8 0V4z"/><path d="M8 5H5a3 3 0 0 0 3 4M16 5h3a3 3 0 0 1-3 4"/><path d="M12 12v3M9 19h6M10 19v-2.5a2 2 0 0 1 4 0V19"/></g>
+      <g id="ic-football"><ellipse cx="12" cy="12" rx="8" ry="4.6" transform="rotate(-32 12 12)"/><path d="M8.6 12.3h6.8M10.5 10.8v3M13.5 10.8v3" transform="rotate(-32 12 12)"/></g>
+      <g id="ic-shield"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></g>
+      <g id="ic-star"><path d="M12 4l2.2 5 5.3.5-4 3.5 1.2 5.3L12 15.8 7.3 18.3 8.5 13 4.5 9.5l5.3-.5L12 4z"/></g>
+      <g id="ic-search"><circle cx="10.3" cy="10.3" r="6.3"/><path d="M20 20l-4.8-4.8"/></g>
+      <g id="ic-grid"><rect x="4" y="4" width="7" height="7" rx="1.3"/><rect x="13" y="4" width="7" height="7" rx="1.3"/><rect x="4" y="13" width="7" height="7" rx="1.3"/><rect x="13" y="13" width="7" height="7" rx="1.3"/></g>
+      <g id="ic-list"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1" fill="currentColor" stroke="none"/></g>
+      <g id="ic-x"><path d="M6 6l12 12M18 6L6 18"/></g>
+      <g id="ic-chevron-right"><path d="M9 5l7 7-7 7"/></g>
+      <g id="ic-check"><path d="M5 12.5l4.5 4.5L19 7"/></g>
+      <g id="ic-medical"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></g>
+      <g id="ic-clock"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></g>
+      <g id="ic-alert"><path d="M12 4l9.5 16H2.5L12 4z"/><path d="M12 10v4M12 17h.01"/></g>
+      <g id="ic-bolt"><path d="M13 3L5 13h5l-1 8 8-10h-5l1-8z"/></g>
+      <g id="ic-activity"><path d="M3 12h4l2-6 4 12 2-6h6"/></g>
+    </defs>
+  </svg>
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-30 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <svg class="icon text-white text-lg"><use href="#ic-dumbbell"/></svg>
+          </div>
+          <div>
+            <span class="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+              GYM TEAM LOG
+            </span>
+            <span class="block text-[10px] font-semibold tracking-wider text-blue-400 uppercase">Dresden Monarchs U20</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-3">
+          <div class="hidden md:flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 text-xs">
+            <span id="liveDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-slate-400" id="statusLabel">Live verbunden</span>
+            <span class="text-slate-600">&middot;</span>
+            <span class="font-bold text-white" id="currentWeekLabel">KW &mdash;</span>
+          </div>
+          <button onclick="loadData(true)" id="refreshBtn" class="px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 text-xs font-semibold flex items-center space-x-2 transition">
+            <svg class="icon" id="refreshIco"><use href="#ic-refresh"/></svg>
+            <span class="hidden sm:inline">Aktualisieren</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="demoBar" class="bg-amber-500/10 border-t border-amber-500/30 text-amber-300 text-xs text-center py-1.5 px-4" hidden>
+      Beispielansicht &ndash; noch keine Live-Verbindung zum Sheet, das hier sind Beispieldaten.<span id="demoBarDetail"></span>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- TEAM DASHBOARD METRICS SUMMARY -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-medium text-slate-400">Team Abgabe-Quote</span>
+          <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs"><svg class="icon"><use href="#ic-check-circle"/></svg></span>
+        </div>
+        <div class="mt-2">
+          <div class="text-2xl font-bold text-white" id="metricSubmissionRate">&mdash;</div>
+          <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
+            <div id="metricProgressBar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-medium text-slate-400">Aktive Spieler</span>
+          <span class="p-2 rounded-lg bg-blue-500/10 text-blue-400 text-xs"><svg class="icon"><use href="#ic-users"/></svg></span>
+        </div>
+        <div class="mt-2">
+          <div class="text-2xl font-bold text-white" id="metricTotalPlayers">&mdash;</div>
+          <span class="text-[11px] text-slate-400" id="metricUnitSplit">&nbsp;</span>
+        </div>
+      </div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-medium text-slate-400">&Oslash; Progress Gesamt</span>
+          <span class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs"><svg class="icon"><use href="#ic-trending"/></svg></span>
+        </div>
+        <div class="mt-2">
+          <div class="text-2xl font-bold" id="metricAvgProgress">&mdash;</div>
+          <span class="text-[11px] text-slate-400">e1RM Steigerung</span>
+        </div>
+      </div>
+      <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-medium text-slate-400">Bester Einzellift</span>
+          <span class="p-2 rounded-lg bg-amber-500/10 text-amber-400 text-xs"><svg class="icon"><use href="#ic-trophy"/></svg></span>
+        </div>
+        <div class="mt-2">
+          <div class="text-2xl font-bold text-white" id="metricTopLifter">&mdash;</div>
+          <span class="text-[11px] text-slate-400" id="metricTopLifterName">&nbsp;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN UNIT TABS & NAVIGATION -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div class="flex space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
+        <button id="tab-offense" onclick="switchUnit('offense')" class="flex-1 sm:flex-none px-5 py-2 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2">
+          <svg class="icon"><use href="#ic-football"/></svg><span>Offense</span>
+        </button>
+        <button id="tab-defense" onclick="switchUnit('defense')" class="flex-1 sm:flex-none px-5 py-2 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2">
+          <svg class="icon"><use href="#ic-shield"/></svg><span>Defense</span>
+        </button>
+        <button id="tab-leaderboard" onclick="switchUnit('leaderboard')" class="flex-1 sm:flex-none px-5 py-2 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2">
+          <svg class="icon"><use href="#ic-star"/></svg><span>Leaderboard</span>
+        </button>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="relative flex-1 sm:w-64">
+          <svg class="icon absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"><use href="#ic-search"/></svg>
+          <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Spieler suchen..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition" />
+        </div>
+        <select id="statusFilter" onchange="applyFilters()" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-blue-500">
+          <option value="ALL">Alle Status</option>
+          <option value="FULL">Vollst&auml;ndig (3/3)</option>
+          <option value="SICK">Krank gemeldet</option>
+          <option value="PARTIAL">Unvollst&auml;ndig</option>
+          <option value="NONE">Keine Abgabe</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- POSITION GROUP BUTTON FILTER -->
+    <div id="positionFilterContainer" class="flex flex-wrap gap-2"></div>
+
+    <!-- POSITION GROUP SUMMARY BANNER -->
+    <div id="groupSummaryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+    <!-- PLAYERS SECTION HEADER & VIEW TOGGLE -->
+    <div id="rosterHeader" class="flex items-center justify-between pt-2">
+      <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+        <span>Teammates &Uuml;bersicht</span>
+        <span id="playerCountBadge" class="bg-slate-800 text-slate-400 text-xs px-2.5 py-0.5 rounded-full border border-slate-700">0 Spieler</span>
+      </h2>
+      <div class="flex items-center space-x-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs">
+        <button id="viewGridBtn" onclick="setViewMode('grid')" class="px-2.5 py-1 rounded"><svg class="icon"><use href="#ic-grid"/></svg></button>
+        <button id="viewTableBtn" onclick="setViewMode('table')" class="px-2.5 py-1 rounded"><svg class="icon"><use href="#ic-list"/></svg></button>
+      </div>
+    </div>
+
+    <div id="playerGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+    <div id="playerTableContainer" class="hidden glass-card rounded-2xl overflow-hidden border border-slate-800">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-900/80 text-slate-400 text-xs font-semibold border-b border-slate-800 uppercase tracking-wider">
+              <th class="p-4">Spieler</th><th class="p-4">Pos</th><th class="p-4">Abgabe</th>
+              <th class="p-4">Bench</th><th class="p-4">Squat</th><th class="p-4">Clean</th>
+              <th class="p-4">Progress</th><th class="p-4 text-right">Aktion</th>
+            </tr>
+          </thead>
+          <tbody id="playerTableBody" class="divide-y divide-slate-800/60 text-sm text-slate-300"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD SECTION -->
+    <div id="leaderboardSection" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="glass-card rounded-2xl p-5 border border-slate-800">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-lg text-white flex items-center space-x-2"><svg class="icon text-blue-400"><use href="#ic-dumbbell"/></svg><span>Bench Press e1RM</span></h3>
+            <span class="text-xs text-slate-500 font-semibold uppercase">Top 5</span>
+          </div>
+          <div id="leaderboardBench" class="space-y-3"></div>
+        </div>
+        <div class="glass-card rounded-2xl p-5 border border-slate-800">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-lg text-white flex items-center space-x-2"><svg class="icon text-emerald-400"><use href="#ic-activity"/></svg><span>Back Squat e1RM</span></h3>
+            <span class="text-xs text-slate-500 font-semibold uppercase">Top 5</span>
+          </div>
+          <div id="leaderboardSquat" class="space-y-3"></div>
+        </div>
+        <div class="glass-card rounded-2xl p-5 border border-slate-800">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-lg text-white flex items-center space-x-2"><svg class="icon text-amber-400"><use href="#ic-bolt"/></svg><span>Power Clean e1RM</span></h3>
+            <span class="text-xs text-slate-500 font-semibold uppercase">Top 5</span>
+          </div>
+          <div id="leaderboardClean" class="space-y-3"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- PLAYER DETAIL MODAL -->
+  <div id="playerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2"><svg class="icon text-lg"><use href="#ic-x"/></svg></button>
+      <div class="flex items-center space-x-4">
+        <div id="modalAvatar" class="w-14 h-14 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-black text-xl border border-blue-500/30">--</div>
+        <div>
+          <h3 id="modalPlayerName" class="text-xl font-bold text-white">Spieler Name</h3>
+          <div class="flex items-center space-x-2 mt-1">
+            <span id="modalPlayerPos" class="bg-slate-800 text-slate-300 text-xs px-2.5 py-0.5 rounded-md font-semibold border border-slate-700">POS</span>
+            <span id="modalPlayerStatus"></span>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 text-center"><span class="text-xs text-slate-400 block mb-1">Bench e1RM</span><span id="modalBenchVal" class="text-lg font-bold text-white">--</span></div>
+        <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 text-center"><span class="text-xs text-slate-400 block mb-1">Squat e1RM</span><span id="modalSquatVal" class="text-lg font-bold text-white">--</span></div>
+        <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 text-center"><span class="text-xs text-slate-400 block mb-1">Clean e1RM</span><span id="modalCleanVal" class="text-lg font-bold text-white">--</span></div>
+      </div>
+      <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800">
+        <h4 class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">e1RM Verlauf &uuml;ber Wochen</h4>
+        <div class="h-48"><canvas id="modalChart"></canvas></div>
+      </div>
+      <div class="flex justify-end"><button onclick="closeModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-semibold transition">Schlie&szlig;en</button></div>
+    </div>
+  </div>
+
+  <footer class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-2 text-center text-[11px] text-slate-600">
+    Nur Leseansicht &middot; Werte aus dem w&ouml;chentlichen Kraftraum-Formular &middot; aktualisiert sich automatisch alle paar Minuten
+  </footer>
+
+<script>
+  // Vom Coach eingetragen: /exec-URL der Apps-Script Web-App (liefert JSON aus doGet()).
+  var API_URL = "https://script.google.com/macros/s/AKfycbzuf0HmGo6Dk29bpvLc7tFFsDAxz4laeGs-QUiB0cAtTxjs6tkhYQn1HxjQ3A35sa4KVA/exec";
+  var REFRESH_MS = 5 * 60 * 1000;
+
+  var currentUnit = 'offense';
+  var currentPositionFilter = 'ALL';
+  var currentStatusFilter = 'ALL';
+  var currentViewMode = 'grid';
+  var searchQuery = '';
+  var playerChartInstance = null;
+  var isDemo = true;
+  var isLoading = false;
+  var lastLoadError = '';
+
+  var DEMO_PLAYERS = [
+    { name: "Max Mustermann", pos: "OL", bench: "3x140", squat: "3x180", clean: "2x100", benchE1RM: 154, squatE1RM: 198, cleanE1RM: 106.7, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 8.5, history: { bench: [130,132,135,140], squat: [195,200,205,210], clean: [125,128,130,135] } },
+    { name: "Lukas Weber", pos: "OL", bench: "Krank", squat: "Krank", clean: "Krank", benchE1RM: 135, squatE1RM: 195, cleanE1RM: 125, status: "SICK", statusText: "Krank gemeldet", overallPct: 5.2, history: { bench: [128,130,135,135], squat: [185,188,195,195], clean: [118,120,125,125] } },
+    { name: "Julian Meyer", pos: "OL", bench: "5x120", squat: "4x160", clean: "kein Wert", benchE1RM: 140, squatE1RM: 181.3, cleanE1RM: 0, status: "PARTIAL", statusText: "2/3 Übungen", overallPct: 3.1, history: { bench: [115,118,120,120], squat: [175,175,180,180], clean: [0,0,0,0] } },
+    { name: "Nico Schmidt", pos: "QB", bench: "6x82", squat: "5x108", clean: "3x74", benchE1RM: 98.4, squatE1RM: 126, cleanE1RM: 81.4, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 6.0, history: { bench: [90,92,92,95], squat: [122,125,128,130], clean: [85,85,88,90] } },
+    { name: "Tim Fischer", pos: "RB", bench: "5x88", squat: "4x120", clean: "5x86", benchE1RM: 102.7, squatE1RM: 136, cleanE1RM: 100.3, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 7.4, history: { bench: [108,110,112,115], squat: [158,162,165,170], clean: [105,108,110,115] } },
+    { name: "David Wagner", pos: "RB", bench: "kein Wert", squat: "kein Wert", clean: "kein Wert", benchE1RM: 0, squatE1RM: 0, cleanE1RM: 0, status: "NONE", statusText: "Keine Abgabe", overallPct: -1.2, history: { bench: [100,100,100,0], squat: [150,150,150,0], clean: [95,95,95,0] } },
+    { name: "Simon Becker", pos: "WR", bench: "8x70", squat: "6x96", clean: "5x62", benchE1RM: 88.7, squatE1RM: 115.2, cleanE1RM: 72.3, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 4.5, history: { bench: [95,98,98,100], squat: [138,140,142,145], clean: [90,92,92,95] } },
+    { name: "Jan Hoffmann", pos: "TE/DB", bench: "4x100", squat: "3x140", clean: "3x86", benchE1RM: 113.3, squatE1RM: 154, cleanE1RM: 94.6, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 6.8, history: { bench: [118,120,122,125], squat: [165,168,170,175], clean: [102,105,108,110] } },
+    { name: "Alexander Koch", pos: "DL", bench: "4x110", squat: "3x150", clean: "3x90", benchE1RM: 124.7, squatE1RM: 165, cleanE1RM: 99, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 9.1, history: { bench: [133,136,140,145], squat: [198,205,210,215], clean: [120,122,125,130] } },
+    { name: "Tobias Bauer", pos: "DL", bench: "5x104", squat: "4x140", clean: "kein Wert", benchE1RM: 121.3, squatE1RM: 158.7, cleanE1RM: 0, status: "PARTIAL", statusText: "2/3 Übungen", overallPct: 2.8, history: { bench: [125,128,130,130], squat: [185,185,190,190], clean: [0,0,0,0] } },
+    { name: "Marco Richter", pos: "LB", bench: "6x90", squat: "5x118", clean: "4x76", benchE1RM: 108, squatE1RM: 137.7, cleanE1RM: 86.1, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 7.2, history: { bench: [122,125,128,130], squat: [172,178,180,185], clean: [112,115,118,120] } },
+    { name: "Felix Klein", pos: "LB", bench: "3x120", squat: "3x160", clean: "3x100", benchE1RM: 132, squatE1RM: 176, cleanE1RM: 110, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 5.0, history: { bench: [115,116,118,120], squat: [166,170,172,175], clean: [105,108,108,110] } },
+    { name: "Sebastian Wolf", pos: "DB", bench: "7x66", squat: "6x88", clean: "5x58", benchE1RM: 81.4, squatE1RM: 105.6, cleanE1RM: 67.7, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 6.1, history: { bench: [98,100,102,105], squat: [146,148,150,155], clean: [94,96,98,100] } },
+    { name: "Christian Neumann", pos: "DB", bench: "kein Wert", squat: "kein Wert", clean: "kein Wert", benchE1RM: 0, squatE1RM: 0, cleanE1RM: 0, status: "NONE", statusText: "Keine Abgabe", overallPct: -0.5, history: { bench: [100,100,0,0], squat: [150,150,0,0], clean: [95,95,0,0] } }
+  ];
+
+  var activePlayersList = [];
+
+  window.onload = function () { loadData(false); setInterval(function(){ loadData(false); }, REFRESH_MS); };
+
+  function isoWeekLabel(d) {
+    var date = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    var dayNum = date.getDay() || 7;
+    date.setDate(date.getDate() + 4 - dayNum);
+    var yearStart = new Date(date.getFullYear(), 0, 1);
+    var weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+    return "KW " + weekNo + " · " + date.getFullYear();
+  }
+
+  // Repliziert die Positionslogik aus dem Apps Script: "TE/DB" zählt zu beiden Einheiten.
+  function categoriesFor(posStr) {
+    var offenseCodes = ["OL", "WR", "TE", "QB", "RB"];
+    var defenseCodes = ["DL", "LB", "DB"];
+    var tokens = String(posStr || "").toUpperCase().split(/[\/,\-\s]+/).filter(Boolean);
+    var offense = tokens.some(function (t) { return offenseCodes.indexOf(t) !== -1; });
+    var defense = tokens.some(function (t) { return defenseCodes.indexOf(t) !== -1; });
+    if (!offense && !defense) offense = true;
+    return { offense: offense, defense: defense, tokens: tokens };
+  }
+
+  function loadData(manual) {
+    if (isLoading) return;
+    isLoading = true;
+    document.getElementById('refreshIco').classList.add('animate-spin');
+
+    var useIt = function (list, demo) {
+      activePlayersList = list;
+      isDemo = demo;
+      finishLoad();
+    };
+
+    if (!API_URL) { useIt(DEMO_PLAYERS, true); return; }
+
+    lastLoadError = '';
+    fetch(API_URL, { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (data) {
+        if (!Array.isArray(data) || !data.length) throw new Error('Antwort ist kein nicht-leeres Array (' + JSON.stringify(data).slice(0, 120) + ')');
+        useIt(data, false);
+      })
+      .catch(function (err) {
+        lastLoadError = (err && err.message) ? err.message : String(err);
+        console.error('Kraftboard: Live-Daten konnten nicht geladen werden ->', lastLoadError);
+        useIt(DEMO_PLAYERS, true);
+      });
+  }
+
+  function finishLoad() {
+    isLoading = false;
+    document.getElementById('refreshIco').classList.remove('animate-spin');
+    document.getElementById('demoBar').hidden = !isDemo;
+    document.getElementById('demoBarDetail').textContent = (isDemo && lastLoadError) ? (' Grund: ' + lastLoadError) : '';
+    document.getElementById('liveDot').className = 'w-2 h-2 rounded-full ' + (isDemo ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse');
+    document.getElementById('statusLabel').textContent = isDemo ? 'Beispieldaten' : 'Live verbunden';
+    document.getElementById('currentWeekLabel').textContent = isoWeekLabel(new Date());
+    renderPositionFilters();
+    applyFilters();
+    updateDashboardMetrics();
+  }
+
+  function tabClass(active) {
+    return active
+      ? "flex-1 sm:flex-none px-5 py-2 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2 bg-blue-600 text-white shadow-md"
+      : "flex-1 sm:flex-none px-5 py-2 rounded-lg font-semibold text-sm transition-all flex items-center justify-center space-x-2 text-slate-400 hover:text-white";
+  }
+
+  function switchUnit(unit) {
+    currentUnit = unit;
+    currentPositionFilter = 'ALL';
+    ['offense', 'defense', 'leaderboard'].forEach(function (u) {
+      document.getElementById('tab-' + u).className = tabClass(u === unit);
+    });
+    var isLb = (unit === 'leaderboard');
+    document.getElementById('leaderboardSection').classList.toggle('hidden', !isLb);
+    document.getElementById('groupSummaryGrid').classList.toggle('hidden', isLb);
+    document.getElementById('rosterHeader').classList.toggle('hidden', isLb);
+    document.getElementById('playerGrid').classList.toggle('hidden', isLb || currentViewMode === 'table');
+    document.getElementById('playerTableContainer').classList.toggle('hidden', isLb || currentViewMode === 'grid');
+    document.getElementById('positionFilterContainer').classList.toggle('hidden', isLb);
+    if (isLb) { renderLeaderboards(); } else { renderPositionFilters(); applyFilters(); }
+  }
+
+  function renderPositionFilters() {
+    var container = document.getElementById('positionFilterContainer');
+    var positions = currentUnit === 'offense' ? ['ALL', 'QB', 'RB', 'WR', 'TE', 'OL'] : ['ALL', 'DL', 'LB', 'DB'];
+    container.innerHTML = positions.map(function (pos) {
+      var active = currentPositionFilter === pos;
+      return '<button onclick="setPosFilter(\'' + pos + '\')" class="px-3 py-1 rounded-lg text-xs font-semibold transition ' +
+        (active ? 'bg-blue-600 text-white' : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white') + '">' +
+        (pos === 'ALL' ? 'Alle Positionen' : pos) + '</button>';
+    }).join('');
+  }
+  function setPosFilter(pos) { currentPositionFilter = pos; renderPositionFilters(); applyFilters(); }
+
+  function setViewMode(mode) {
+    currentViewMode = mode;
+    document.getElementById('viewGridBtn').className = 'px-2.5 py-1 rounded ' + (mode === 'grid' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white');
+    document.getElementById('viewTableBtn').className = 'px-2.5 py-1 rounded ' + (mode === 'table' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white');
+    if (currentUnit !== 'leaderboard') {
+      document.getElementById('playerGrid').classList.toggle('hidden', mode === 'table');
+      document.getElementById('playerTableContainer').classList.toggle('hidden', mode === 'grid');
+    }
+  }
+
+  function applyFilters() {
+    searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+    currentStatusFilter = document.getElementById('statusFilter').value;
+    var filtered = activePlayersList.filter(function (p) {
+      var cat = categoriesFor(p.pos);
+      var matchesUnit = (currentUnit === 'leaderboard') || cat[currentUnit];
+      var matchesPos = (currentPositionFilter === 'ALL') || cat.tokens.indexOf(currentPositionFilter) !== -1;
+      var matchesStatus = (currentStatusFilter === 'ALL') || (p.status === currentStatusFilter);
+      var matchesSearch = !searchQuery || p.name.toLowerCase().indexOf(searchQuery) !== -1 || String(p.pos).toLowerCase().indexOf(searchQuery) !== -1;
+      return matchesUnit && matchesPos && matchesStatus && matchesSearch;
+    });
+    document.getElementById('playerCountBadge').innerText = filtered.length + ' Spieler';
+    renderGroupSummaries();
+    renderPlayerCards(filtered);
+    renderPlayerTable(filtered);
+  }
+
+  function renderGroupSummaries() {
+    var container = document.getElementById('groupSummaryGrid');
+    var groups = currentUnit === 'offense' ? ['QB', 'RB', 'WR', 'TE', 'OL'] : ['DL', 'LB', 'DB'];
+    container.innerHTML = groups.map(function (group) {
+      var groupPlayers = activePlayersList.filter(function (p) {
+        var cat = categoriesFor(p.pos);
+        return cat[currentUnit] && cat.tokens.indexOf(group) !== -1;
+      });
+      if (!groupPlayers.length) return '';
+      var total = groupPlayers.length;
+      var fullCount = groupPlayers.filter(function (p) { return p.status === 'FULL' || p.status === 'SICK'; }).length;
+      var pct = Math.round((fullCount / total) * 100);
+      var statusBg = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+      var statusText = 'ALLE DA (' + fullCount + '/' + total + ')';
+      if (fullCount === 0) { statusBg = 'bg-red-500/10 text-red-400 border-red-500/20'; statusText = 'FEHLEN (0/' + total + ')'; }
+      else if (fullCount < total) { statusBg = 'bg-amber-500/10 text-amber-400 border-amber-500/20'; statusText = 'OFFEN (' + fullCount + '/' + total + ')'; }
+      var avg = groupPlayers.reduce(function (a, b) { return a + (b.overallPct || 0); }, 0) / total;
+      return '<div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-3">' +
+        '<div class="flex items-center justify-between"><span class="font-bold text-white text-base">' + group + ' Gruppe</span>' +
+        '<span class="text-xs px-2.5 py-1 rounded-md font-semibold border ' + statusBg + '">' + statusText + '</span></div>' +
+        '<div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden"><div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width:' + pct + '%"></div></div>' +
+        '<div class="flex justify-between text-xs text-slate-400 pt-1"><span>Fortschritt: <strong class="' + (avg >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (avg >= 0 ? '+' : '') + avg.toFixed(1) + '%</strong></span><span>' + total + ' Spieler</span></div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function getStatusBadge(status) {
+    if (status === 'FULL') return '<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs px-2.5 py-0.5 rounded-md font-semibold inline-flex items-center gap-1"><svg class="icon"><use href="#ic-check"/></svg>3/3 Abgegeben</span>';
+    if (status === 'SICK') return '<span class="bg-purple-500/10 text-purple-400 border border-purple-500/30 text-xs px-2.5 py-0.5 rounded-md font-semibold inline-flex items-center gap-1"><svg class="icon"><use href="#ic-medical"/></svg>Krank gemeldet</span>';
+    if (status === 'PARTIAL') return '<span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-0.5 rounded-md font-semibold inline-flex items-center gap-1"><svg class="icon"><use href="#ic-clock"/></svg>Teilweise</span>';
+    return '<span class="bg-red-500/10 text-red-400 border border-red-500/30 text-xs px-2.5 py-0.5 rounded-md font-semibold inline-flex items-center gap-1"><svg class="icon"><use href="#ic-alert"/></svg>Keine Abgabe</span>';
+  }
+
+  function initials(name) { return String(name).split(' ').map(function (n) { return n[0]; }).join(''); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
+
+  function renderPlayerCards(players) {
+    var container = document.getElementById('playerGrid');
+    if (!players.length) { container.innerHTML = '<div class="col-span-full py-12 text-center text-slate-500">Keine Spieler für die ausgewählten Filter gefunden.</div>'; return; }
+    container.innerHTML = players.map(function (p) {
+      var lift = function (label, raw, rm) {
+        var sick = raw === 'Krank';
+        return '<div><span class="text-slate-500 block mb-0.5">' + label + '</span>' +
+          '<strong class="' + (sick ? 'text-purple-400' : 'text-slate-200') + '">' + esc(raw) + '</strong>' +
+          (sick ? '<span class="block text-[10px] text-slate-400">(' + rm + ' kg 1RM)</span>' : '') + '</div>';
+      };
+      return '<div class="glass-card rounded-2xl p-5 border border-slate-800 hover:border-slate-700 transition space-y-4">' +
+        '<div class="flex items-center justify-between">' +
+          '<div class="flex items-center space-x-3">' +
+            '<div class="w-10 h-10 rounded-xl bg-slate-800 text-blue-400 font-black flex items-center justify-center border border-slate-700">' + esc(initials(p.name)) + '</div>' +
+            '<div><h3 class="font-bold text-white text-base">' + esc(p.name) + '</h3><span class="text-xs font-semibold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">' + esc(p.pos) + '</span></div>' +
+          '</div>' + getStatusBadge(p.status) +
+        '</div>' +
+        '<div class="grid grid-cols-3 gap-2 bg-slate-950/40 p-3 rounded-xl border border-slate-800/80 text-center text-xs">' +
+          lift('Bench', p.bench, p.benchE1RM) + lift('Squat', p.squat, p.squatE1RM) + lift('Clean', p.clean, p.cleanE1RM) +
+        '</div>' +
+        '<div class="flex items-center justify-between text-xs pt-1 border-t border-slate-800/60">' +
+          '<span class="text-slate-400">Progress Gesamt: <strong class="' + (p.overallPct >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (p.overallPct > 0 ? '+' : '') + p.overallPct.toFixed(1) + '%</strong></span>' +
+          '<button onclick="openPlayerModal(' + JSON.stringify(p.name) + ')" class="text-blue-400 hover:text-blue-300 font-semibold flex items-center space-x-1"><span>Details &amp; Graph</span><svg class="icon"><use href="#ic-chevron-right"/></svg></button>' +
+        '</div></div>';
+    }).join('');
+  }
+
+  function renderPlayerTable(players) {
+    var tbody = document.getElementById('playerTableBody');
+    tbody.innerHTML = players.map(function (p) {
+      var cell = function (raw, rm) { return esc(raw) + (raw === 'Krank' ? ' <span class="text-xs text-slate-400">(' + rm + ' kg)</span>' : ''); };
+      return '<tr class="hover:bg-slate-800/30 transition">' +
+        '<td class="p-4 font-bold text-white">' + esc(p.name) + '</td>' +
+        '<td class="p-4"><span class="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded">' + esc(p.pos) + '</span></td>' +
+        '<td class="p-4">' + getStatusBadge(p.status) + '</td>' +
+        '<td class="p-4">' + cell(p.bench, p.benchE1RM) + '</td>' +
+        '<td class="p-4">' + cell(p.squat, p.squatE1RM) + '</td>' +
+        '<td class="p-4">' + cell(p.clean, p.cleanE1RM) + '</td>' +
+        '<td class="p-4 font-bold ' + (p.overallPct >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (p.overallPct > 0 ? '+' : '') + p.overallPct.toFixed(1) + '%</td>' +
+        '<td class="p-4 text-right"><button onclick="openPlayerModal(' + JSON.stringify(p.name) + ')" class="px-3 py-1 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded-lg text-xs font-semibold">Details</button></td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function renderLeaderboards() {
+    var renderTop5 = function (liftKey, elementId, iconId) {
+      var sorted = activePlayersList.filter(function (p) { return p[liftKey] > 0; }).sort(function (a, b) { return b[liftKey] - a[liftKey]; }).slice(0, 5);
+      document.getElementById(elementId).innerHTML = sorted.length ? sorted.map(function (p, idx) {
+        return '<div class="flex items-center justify-between p-3 rounded-xl ' + (idx === 0 ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-slate-950/40 border border-slate-800') + '">' +
+          '<div class="flex items-center space-x-3"><span class="w-6 h-6 rounded-full ' + (idx === 0 ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400') + ' font-black text-xs flex items-center justify-center">' + (idx + 1) + '</span>' +
+          '<div><strong class="text-white text-sm block">' + esc(p.name) + '</strong><span class="text-[11px] text-slate-400">' + esc(p.pos) + '</span></div></div>' +
+          '<span class="font-extrabold text-blue-400 text-sm">' + p[liftKey] + ' kg</span></div>';
+      }).join('') : '<div class="text-sm text-slate-500 text-center py-6">Noch keine Werte</div>';
+    };
+    renderTop5('benchE1RM', 'leaderboardBench');
+    renderTop5('squatE1RM', 'leaderboardSquat');
+    renderTop5('cleanE1RM', 'leaderboardClean');
+  }
+
+  function openPlayerModal(playerName) {
+    var player = activePlayersList.find(function (p) { return p.name === playerName; });
+    if (!player) return;
+    document.getElementById('modalPlayerName').innerText = player.name;
+    document.getElementById('modalPlayerPos').innerText = player.pos;
+    document.getElementById('modalAvatar').innerText = initials(player.name);
+    document.getElementById('modalPlayerStatus').innerHTML = getStatusBadge(player.status);
+    document.getElementById('modalBenchVal').innerText = player.bench === 'Krank' ? ('Krank (' + player.benchE1RM + ' kg)') : player.bench;
+    document.getElementById('modalSquatVal').innerText = player.squat === 'Krank' ? ('Krank (' + player.squatE1RM + ' kg)') : player.squat;
+    document.getElementById('modalCleanVal').innerText = player.clean === 'Krank' ? ('Krank (' + player.cleanE1RM + ' kg)') : player.clean;
+    document.getElementById('playerModal').classList.remove('hidden');
+
+    var hist = player.history || { bench: [], squat: [], clean: [] };
+    var n = Math.max(hist.bench.length, hist.squat.length, hist.clean.length, 1);
+    var labels = []; for (var i = 1; i <= n; i++) labels.push('W' + i);
+
+    var ctx = document.getElementById('modalChart').getContext('2d');
+    if (playerChartInstance) playerChartInstance.destroy();
+    playerChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: { labels: labels, datasets: [
+        { label: 'Bench e1RM', data: hist.bench, borderColor: '#3b82f6', tension: 0.3 },
+        { label: 'Squat e1RM', data: hist.squat, borderColor: '#10b981', tension: 0.3 },
+        { label: 'Clean e1RM', data: hist.clean, borderColor: '#f59e0b', tension: 0.3 }
+      ] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 } } } },
+        scales: {
+          x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        }
+      }
+    });
+  }
+  function closeModal() { document.getElementById('playerModal').classList.add('hidden'); }
+
+  function updateDashboardMetrics() {
+    var total = activePlayersList.length;
+    var fullCount = activePlayersList.filter(function (p) { return p.status === 'FULL' || p.status === 'SICK'; }).length;
+    var rate = total ? Math.round((fullCount / total) * 100) : 0;
+    document.getElementById('metricSubmissionRate').innerText = rate + '%';
+    document.getElementById('metricProgressBar').style.width = rate + '%';
+    document.getElementById('metricTotalPlayers').innerText = total;
+
+    var offCount = activePlayersList.filter(function (p) { return categoriesFor(p.pos).offense; }).length;
+    var defCount = activePlayersList.filter(function (p) { return categoriesFor(p.pos).defense; }).length;
+    document.getElementById('metricUnitSplit').innerText = offCount + ' Offense / ' + defCount + ' Defense';
+
+    var avgProg = total ? (activePlayersList.reduce(function (a, b) { return a + (b.overallPct || 0); }, 0) / total) : 0;
+    var avgEl = document.getElementById('metricAvgProgress');
+    avgEl.innerText = (avgProg > 0 ? '+' : '') + avgProg.toFixed(1) + '%';
+    avgEl.className = 'text-2xl font-bold ' + (avgProg >= 0 ? 'text-emerald-400' : 'text-red-400');
+
+    var best = null;
+    activePlayersList.forEach(function (p) {
+      [['benchE1RM','Bench'],['squatE1RM','Squat'],['cleanE1RM','Clean']].forEach(function (pair) {
+        var v = p[pair[0]];
+        if (v && (!best || v > best.v)) best = { v: v, name: p.name, pos: p.pos, lift: pair[1] };
+      });
+    });
+    document.getElementById('metricTopLifter').innerText = best ? (Math.round(best.v * 10) / 10) + ' kg' : '–';
+    document.getElementById('metricTopLifterName').innerText = best ? (best.name + ' · ' + best.lift + ' (' + best.pos + ')') : ' ';
+  }
+
+  switchUnit('offense');
+</script>
+
+</div>
