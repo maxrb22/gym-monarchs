@@ -63,6 +63,9 @@
       <g id="ic-bench-press"><path d="M2 9h20M5 6v6M8 7.3v3.4M16 7.3v3.4M19 6v6"/></g>
       <g id="ic-squat"><circle cx="12" cy="4.2" r="1.6"/><path d="M6 8.5h12M6 6.3v4.4M18 6.3v4.4M12 8.5v5M12 13.5l-4 3v4M12 13.5l4 3v4"/></g>
       <g id="ic-power-clean"><path d="M4 7h16M6 4v6M18 4v6M12 20v-8.5M9 14.5l3-3 3 3"/></g>
+      <g id="ic-bandage"><rect x="3" y="8.5" width="18" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="M10.6 10.6h.01M13.4 13.4h.01M13.4 10.6h.01M10.6 13.4h.01"/></g>
+      <g id="ic-sun"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></g>
+      <g id="ic-pause"><rect x="7" y="5" width="3.5" height="14" rx="1"/><rect x="13.5" y="5" width="3.5" height="14" rx="1"/></g>
     </defs>
   </svg>
 
@@ -170,7 +173,8 @@
         <select id="statusFilter" onchange="applyFilters()" class="min-w-0 max-w-[9.5rem] xs:max-w-none bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-blue-500">
           <option value="ALL">Alle Status</option>
           <option value="FULL">Vollst&auml;ndig (3/3)</option>
-          <option value="SICK">Krank gemeldet</option>
+          <option value="EXCUSED">Krank / Verletzt / Urlaub</option>
+          <option value="PAUSED">Komplett pausiert</option>
           <option value="PARTIAL">Unvollst&auml;ndig</option>
           <option value="NONE">Keine Abgabe</option>
         </select>
@@ -273,7 +277,7 @@
 
 <script>
   // Vom Coach eingetragen: /exec-URL der Apps-Script Web-App (liefert JSON aus doGet()).
-  var API_URL = "https://script.google.com/macros/s/AKfycbx53LlCcKhsSqG0EVB-3t7qcfo57dvvF8WAD58zz2SRYbDAstDM9sfJHAPnUzNoAdLunA/exec";
+  var API_URL = "https://script.google.com/macros/s/AKfycbx6ekF0SSWV9xTLbmqjpM970gl48wHRb1f2kgpeYuOFh-D0aFnAZYuVuOlyjCLCDbhI7A/exec";
   var REFRESH_MS = 5 * 60 * 1000;
 
   var currentUnit = 'offense';
@@ -289,18 +293,18 @@
   var DEMO_PLAYERS = [
     { name: "Max Mustermann", pos: "OL", bench: "3x140", squat: "3x180", clean: "2x100", benchE1RM: 154, squatE1RM: 198, cleanE1RM: 106.7, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 8.5, history: { bench: [130,132,135,140], squat: [195,200,205,210], clean: [125,128,130,135] } },
     { name: "Lukas Weber", pos: "OL", bench: "Krank", squat: "Krank", clean: "Krank", benchE1RM: 135, squatE1RM: 195, cleanE1RM: 125, status: "SICK", statusText: "Krank gemeldet", overallPct: 5.2, history: { bench: [128,130,135,135], squat: [185,188,195,195], clean: [118,120,125,125] } },
-    { name: "Julian Meyer", pos: "OL", bench: "5x120", squat: "4x160", clean: "kein Wert", benchE1RM: 140, squatE1RM: 181.3, cleanE1RM: 0, status: "PARTIAL", statusText: "2/3 Übungen", overallPct: 3.1, history: { bench: [115,118,120,120], squat: [175,175,180,180], clean: [0,0,0,0] } },
+    { name: "Julian Meyer", pos: "OL", bench: "5x120", squat: "4x160", clean: "Pausiert", benchE1RM: 140, squatE1RM: 181.3, cleanE1RM: 0, status: "PARTIAL", statusText: "2/3 Übungen", overallPct: 3.1, history: { bench: [115,118,120,120], squat: [175,175,180,180], clean: [0,0,0,0] } },
     { name: "Nico Schmidt", pos: "QB", bench: "6x82", squat: "5x108", clean: "3x74", benchE1RM: 98.4, squatE1RM: 126, cleanE1RM: 81.4, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 6.0, history: { bench: [90,92,92,95], squat: [122,125,128,130], clean: [85,85,88,90] } },
     { name: "Tim Fischer", pos: "RB", bench: "5x88", squat: "4x120", clean: "5x86", benchE1RM: 102.7, squatE1RM: 136, cleanE1RM: 100.3, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 7.4, history: { bench: [108,110,112,115], squat: [158,162,165,170], clean: [105,108,110,115] } },
-    { name: "David Wagner", pos: "RB", bench: "kein Wert", squat: "kein Wert", clean: "kein Wert", benchE1RM: 0, squatE1RM: 0, cleanE1RM: 0, status: "NONE", statusText: "Keine Abgabe", overallPct: -1.2, history: { bench: [100,100,100,0], squat: [150,150,150,0], clean: [95,95,95,0] } },
-    { name: "Simon Becker", pos: "WR", bench: "8x70", squat: "6x96", clean: "5x62", benchE1RM: 88.7, squatE1RM: 115.2, cleanE1RM: 72.3, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 4.5, history: { bench: [95,98,98,100], squat: [138,140,142,145], clean: [90,92,92,95] } },
+    { name: "David Wagner", pos: "RB", bench: "Verletzt", squat: "Verletzt", clean: "Verletzt", benchE1RM: 100, squatE1RM: 150, cleanE1RM: 95, status: "EXCUSED", statusText: "Verletzt", overallPct: -1.2, history: { bench: [100,100,100,0], squat: [150,150,150,0], clean: [95,95,95,0] } },
+    { name: "Simon Becker", pos: "WR", bench: "8x70", squat: "Pausiert", clean: "Pausiert", benchE1RM: 88.7, squatE1RM: 115.2, cleanE1RM: 72.3, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 4.5, history: { bench: [95,98,98,100], squat: [138,140,142,145], clean: [90,92,92,95] } },
     { name: "Jan Hoffmann", pos: "TE/DB", bench: "4x100", squat: "3x140", clean: "3x86", benchE1RM: 113.3, squatE1RM: 154, cleanE1RM: 94.6, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 6.8, history: { bench: [118,120,122,125], squat: [165,168,170,175], clean: [102,105,108,110] } },
     { name: "Alexander Koch", pos: "DL", bench: "4x110", squat: "3x150", clean: "3x90", benchE1RM: 124.7, squatE1RM: 165, cleanE1RM: 99, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 9.1, history: { bench: [133,136,140,145], squat: [198,205,210,215], clean: [120,122,125,130] } },
-    { name: "Tobias Bauer", pos: "DL", bench: "5x104", squat: "4x140", clean: "kein Wert", benchE1RM: 121.3, squatE1RM: 158.7, cleanE1RM: 0, status: "PARTIAL", statusText: "2/3 Übungen", overallPct: 2.8, history: { bench: [125,128,130,130], squat: [185,185,190,190], clean: [0,0,0,0] } },
+    { name: "Tobias Bauer", pos: "DL", bench: "Pausiert", squat: "Pausiert", clean: "Pausiert", benchE1RM: 121.3, squatE1RM: 158.7, cleanE1RM: 0, status: "PARTIAL", statusText: "2/3 Übungen", overallPct: 2.8, history: { bench: [125,128,130,130], squat: [185,185,190,190], clean: [0,0,0,0] } },
     { name: "Marco Richter", pos: "LB", bench: "6x90", squat: "5x118", clean: "4x76", benchE1RM: 108, squatE1RM: 137.7, cleanE1RM: 86.1, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 7.2, history: { bench: [122,125,128,130], squat: [172,178,180,185], clean: [112,115,118,120] } },
     { name: "Felix Klein", pos: "LB", bench: "3x120", squat: "3x160", clean: "3x100", benchE1RM: 132, squatE1RM: 176, cleanE1RM: 110, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 5.0, history: { bench: [115,116,118,120], squat: [166,170,172,175], clean: [105,108,108,110] } },
     { name: "Sebastian Wolf", pos: "DB", bench: "7x66", squat: "6x88", clean: "5x58", benchE1RM: 81.4, squatE1RM: 105.6, cleanE1RM: 67.7, status: "FULL", statusText: "Vollständig (3/3)", overallPct: 6.1, history: { bench: [98,100,102,105], squat: [146,148,150,155], clean: [94,96,98,100] } },
-    { name: "Christian Neumann", pos: "DB", bench: "kein Wert", squat: "kein Wert", clean: "kein Wert", benchE1RM: 0, squatE1RM: 0, cleanE1RM: 0, status: "NONE", statusText: "Keine Abgabe", overallPct: -0.5, history: { bench: [100,100,0,0], squat: [150,150,0,0], clean: [95,95,0,0] } }
+    { name: "Christian Neumann", pos: "DB", bench: "Im Urlaub", squat: "Im Urlaub", clean: "Im Urlaub", benchE1RM: 100, squatE1RM: 150, cleanE1RM: 95, status: "EXCUSED", statusText: "Im Urlaub", overallPct: -0.5, history: { bench: [100,100,0,0], squat: [150,150,0,0], clean: [95,95,0,0] } }
   ];
 
   var activePlayersList = [];
@@ -327,12 +331,52 @@
     return { offense: offense, defense: defense, tokens: tokens };
   }
 
+  // Abwesenheiten gelten wie im Sheet als abgegeben; pausierte Übungen müssen nicht abgegeben werden.
+  var LIFTS = ['bench', 'squat', 'clean'];
+  var LIFT_STYLES = {
+    sick:     { text: 'text-purple-400', badge: 'bg-purple-500/10 text-purple-400 border border-purple-500/30', icon: 'ic-medical', short: 'Krank', full: 'Krank gemeldet' },
+    injured:  { text: 'text-rose-400',   badge: 'bg-rose-500/10 text-rose-400 border border-rose-500/30',       icon: 'ic-bandage', short: 'Verletzt', full: 'Verletzt' },
+    vacation: { text: 'text-yellow-300', badge: 'bg-yellow-400/10 text-yellow-300 border border-yellow-400/30', icon: 'ic-sun',     short: 'Urlaub', full: 'Im Urlaub' },
+    paused:   { text: 'text-slate-500',  badge: 'bg-slate-500/10 text-slate-400 border border-slate-500/30',    icon: 'ic-pause',   short: 'Pausiert', full: 'Pausiert' }
+  };
+
+  function liftKind(raw) {
+    var s = String(raw == null ? '' : raw).trim().toLowerCase();
+    if (!s || s === 'kein wert') return 'none';
+    if (s.indexOf('pausiert') !== -1) return 'paused';
+    if (s.indexOf('verletzt') !== -1) return 'injured';
+    if (s.indexOf('urlaub') !== -1) return 'vacation';
+    if (s.indexOf('krank') !== -1) return 'sick';
+    return 'value';
+  }
+
+  function submissionInfo(p) {
+    var required = 0, done = 0, excused = 0, reason = null;
+    LIFTS.forEach(function (l) {
+      var k = liftKind(p[l]);
+      if (k === 'paused') return;
+      required++;
+      if (k === 'value') { done++; }
+      else if (k !== 'none') { done++; excused++; reason = reason || k; }
+    });
+    var code;
+    if (!required) code = 'PAUSED';
+    else if (done === required) code = (excused === required) ? 'EXCUSED' : 'FULL';
+    else code = done ? 'PARTIAL' : 'NONE';
+    return { code: code, required: required, done: done, reason: reason };
+  }
+
+  function sumSubmissions(players) {
+    return players.reduce(function (acc, p) { acc.done += p.sub.done; acc.required += p.sub.required; return acc; }, { done: 0, required: 0 });
+  }
+
   function loadData(manual) {
     if (isLoading) return;
     isLoading = true;
     document.getElementById('refreshIco').classList.add('animate-spin');
 
     var useIt = function (list, demo) {
+      list.forEach(function (p) { p.sub = submissionInfo(p); });
       activePlayersList = list;
       isDemo = demo;
       finishLoad();
@@ -418,7 +462,7 @@
       var cat = categoriesFor(p.pos);
       var matchesUnit = (currentUnit === 'leaderboard') || cat[currentUnit];
       var matchesPos = (currentPositionFilter === 'ALL') || cat.tokens.indexOf(currentPositionFilter) !== -1;
-      var matchesStatus = (currentStatusFilter === 'ALL') || (p.status === currentStatusFilter);
+      var matchesStatus = (currentStatusFilter === 'ALL') || (p.sub.code === currentStatusFilter);
       var matchesSearch = !searchQuery || p.name.toLowerCase().indexOf(searchQuery) !== -1 || String(p.pos).toLowerCase().indexOf(searchQuery) !== -1;
       return matchesUnit && matchesPos && matchesStatus && matchesSearch;
     });
@@ -438,18 +482,18 @@
       });
       if (!groupPlayers.length) return '';
       var total = groupPlayers.length;
-      var fullCount = groupPlayers.filter(function (p) { return p.status === 'FULL' || p.status === 'SICK'; }).length;
-      var pct = Math.round((fullCount / total) * 100);
-      var statusBg = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
-      var statusText = 'ALLE DA (' + fullCount + '/' + total + ')';
-      if (fullCount === 0) { statusBg = 'bg-red-500/10 text-red-400 border-red-500/20'; statusText = 'FEHLEN (0/' + total + ')'; }
-      else if (fullCount < total) { statusBg = 'bg-amber-500/10 text-amber-400 border-amber-500/20'; statusText = 'OFFEN (' + fullCount + '/' + total + ')'; }
+      // Anteil abgegebener (inkl. krank/verletzt/Urlaub) an allen nicht pausierten Übungen der Gruppe
+      var sub = sumSubmissions(groupPlayers);
+      var pct = sub.required ? Math.round((sub.done / sub.required) * 100) : 100;
+      var tone = pct >= 100 ? { badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', bar: 'bg-emerald-500' }
+        : pct > 0 ? { badge: 'bg-amber-500/10 text-amber-400 border-amber-500/20', bar: 'bg-amber-500' }
+        : { badge: 'bg-red-500/10 text-red-400 border-red-500/20', bar: 'bg-red-500' };
       var avg = groupPlayers.reduce(function (a, b) { return a + (b.overallPct || 0); }, 0) / total;
       return '<div class="glass-card rounded-2xl p-4 border border-slate-800 space-y-3 min-w-0">' +
         '<div class="flex items-center justify-between gap-2 flex-wrap"><span class="font-bold text-white text-base shrink-0">' + group + ' Gruppe</span>' +
-        '<span class="text-xs px-2.5 py-1 rounded-md font-semibold border whitespace-nowrap ' + statusBg + '">' + statusText + '</span></div>' +
-        '<div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden"><div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width:' + pct + '%"></div></div>' +
-        '<div class="flex justify-between gap-2 text-xs text-slate-400 pt-1"><span class="truncate min-w-0"><span class="xs:hidden">&Oslash;</span><span class="hidden xs:inline">Fortschritt:</span> <strong class="' + (avg >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (avg >= 0 ? '+' : '') + avg.toFixed(1) + '%</strong></span><span class="shrink-0">' + total + ' Spieler</span></div>' +
+        '<span class="text-xs px-2.5 py-1 rounded-md font-semibold border whitespace-nowrap ' + tone.badge + '">' + pct + '% abgegeben</span></div>' +
+        '<div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden"><div class="' + tone.bar + ' h-2 rounded-full transition-all duration-300" style="width:' + pct + '%"></div></div>' +
+        '<div class="flex justify-between gap-2 text-xs text-slate-400 pt-1"><span class="truncate min-w-0"><span class="xs:hidden">&Oslash;</span><span class="hidden xs:inline">Fortschritt:</span> <strong class="' + (avg >= 0 ? 'text-emerald-400' : 'text-red-400') + '">' + (avg >= 0 ? '+' : '') + avg.toFixed(1) + '%</strong></span><span class="shrink-0">' + sub.done + '/' + sub.required + ' Werte &middot; ' + total + ' Spieler</span></div>' +
       '</div>';
     }).join('');
   }
@@ -458,12 +502,20 @@
     return '<span class="' + cls + ' text-xs px-2 xs:px-2.5 py-0.5 rounded-md font-semibold inline-flex items-center gap-1 max-w-full"><svg class="icon shrink-0"><use href="#' + icon + '"/></svg>' +
       '<span class="truncate"><span class="xs:hidden">' + short + '</span><span class="hidden xs:inline">' + full + '</span></span></span>';
   }
-  function getStatusBadge(status) {
-    if (status === 'FULL') return badgeSpan('bg-emerald-500/10 text-emerald-400 border border-emerald-500/30', 'ic-check', '3/3', '3/3 Abgegeben');
-    if (status === 'SICK') return badgeSpan('bg-purple-500/10 text-purple-400 border border-purple-500/30', 'ic-medical', 'Krank', 'Krank gemeldet');
-    if (status === 'PARTIAL') return badgeSpan('bg-amber-500/10 text-amber-400 border border-amber-500/30', 'ic-clock', 'Teilw.', 'Teilweise');
-    return badgeSpan('bg-red-500/10 text-red-400 border border-red-500/30', 'ic-alert', '0/3', 'Keine Abgabe');
+  function getStatusBadge(p) {
+    var s = p.sub, frac = s.done + '/' + s.required;
+    if (s.code === 'FULL') return badgeSpan('bg-emerald-500/10 text-emerald-400 border border-emerald-500/30', 'ic-check', frac, frac + ' Abgegeben');
+    if (s.code === 'EXCUSED' || s.code === 'PAUSED') {
+      var st = LIFT_STYLES[s.code === 'PAUSED' ? 'paused' : s.reason];
+      return badgeSpan(st.badge, st.icon, st.short, st.full);
+    }
+    if (s.code === 'PARTIAL') return badgeSpan('bg-amber-500/10 text-amber-400 border border-amber-500/30', 'ic-clock', frac, 'Teilweise (' + frac + ')');
+    return badgeSpan('bg-red-500/10 text-red-400 border border-red-500/30', 'ic-alert', frac, 'Keine Abgabe');
   }
+
+  // Krank/Verletzt/Urlaub/Pausiert farbig, dahinter der letzte gültige e1RM (falls vorhanden)
+  function liftStyle(raw) { return LIFT_STYLES[liftKind(raw)] || null; }
+  function liftNote(raw, rm) { return (liftStyle(raw) && rm > 0) ? '(' + rm + ' kg)' : ''; }
 
   function initials(name) { return String(name).split(' ').map(function (n) { return n[0]; }).join(''); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
@@ -473,17 +525,17 @@
     if (!players.length) { container.innerHTML = '<div class="col-span-full py-12 text-center text-slate-500">Keine Spieler für die ausgewählten Filter gefunden.</div>'; return; }
     container.innerHTML = players.map(function (p) {
       var lift = function (label, raw, rm) {
-        var sick = raw === 'Krank';
+        var st = liftStyle(raw), note = liftNote(raw, rm);
         return '<div class="min-w-0"><span class="text-slate-500 block mb-0.5">' + label + '</span>' +
-          '<strong class="break-words ' + (sick ? 'text-purple-400' : 'text-slate-200') + '">' + esc(raw) + '</strong>' +
-          (sick ? '<span class="block text-[10px] text-slate-400">(' + rm + ' kg)</span>' : '') + '</div>';
+          '<strong class="break-words ' + (st ? st.text : 'text-slate-200') + '">' + esc(raw) + '</strong>' +
+          (note ? '<span class="block text-[10px] text-slate-400">' + note + '</span>' : '') + '</div>';
       };
       return '<div class="glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 hover:border-slate-700 transition space-y-4 min-w-0">' +
         '<div class="flex items-start justify-between gap-2 flex-wrap">' +
           '<div class="flex items-center gap-3 min-w-0">' +
             '<div class="w-10 h-10 rounded-xl bg-slate-800 text-blue-400 font-black flex items-center justify-center border border-slate-700 shrink-0">' + esc(initials(p.name)) + '</div>' +
             '<div class="min-w-0"><h3 class="font-bold text-white text-base truncate">' + esc(p.name) + '</h3><span class="text-xs font-semibold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">' + esc(p.pos) + '</span></div>' +
-          '</div>' + getStatusBadge(p.status) +
+          '</div>' + getStatusBadge(p) +
         '</div>' +
         '<div class="grid grid-cols-3 gap-2 bg-slate-950/40 p-3 rounded-xl border border-slate-800/80 text-center text-xs">' +
           lift('Bench', p.bench, p.benchE1RM) + lift('Squat', p.squat, p.squatE1RM) + lift('Clean', p.clean, p.cleanE1RM) +
@@ -498,11 +550,14 @@
   function renderPlayerTable(players) {
     var tbody = document.getElementById('playerTableBody');
     tbody.innerHTML = players.map(function (p) {
-      var cell = function (raw, rm) { return esc(raw) + (raw === 'Krank' ? ' <span class="text-xs text-slate-400">(' + rm + ' kg)</span>' : ''); };
+      var cell = function (raw, rm) {
+        var st = liftStyle(raw), note = liftNote(raw, rm);
+        return (st ? '<span class="' + st.text + '">' + esc(raw) + '</span>' : esc(raw)) + (note ? ' <span class="text-xs text-slate-400">' + note + '</span>' : '');
+      };
       return '<tr class="hover:bg-slate-800/30 transition">' +
         '<td class="p-2 sm:p-4 font-bold text-white max-w-[7rem] sm:max-w-none truncate">' + esc(p.name) + '</td>' +
         '<td class="p-2 sm:p-4"><span class="bg-slate-800 text-slate-300 text-xs px-2 py-0.5 rounded whitespace-nowrap">' + esc(p.pos) + '</span></td>' +
-        '<td class="p-2 sm:p-4">' + getStatusBadge(p.status) + '</td>' +
+        '<td class="p-2 sm:p-4">' + getStatusBadge(p) + '</td>' +
         '<td class="p-2 sm:p-4 whitespace-nowrap">' + cell(p.bench, p.benchE1RM) + '</td>' +
         '<td class="p-2 sm:p-4 whitespace-nowrap">' + cell(p.squat, p.squatE1RM) + '</td>' +
         '<td class="p-2 sm:p-4 whitespace-nowrap">' + cell(p.clean, p.cleanE1RM) + '</td>' +
@@ -533,10 +588,13 @@
     document.getElementById('modalPlayerName').innerText = player.name;
     document.getElementById('modalPlayerPos').innerText = player.pos;
     document.getElementById('modalAvatar').innerText = initials(player.name);
-    document.getElementById('modalPlayerStatus').innerHTML = getStatusBadge(player.status);
-    document.getElementById('modalBenchVal').innerText = player.bench === 'Krank' ? ('Krank (' + player.benchE1RM + ' kg)') : player.bench;
-    document.getElementById('modalSquatVal').innerText = player.squat === 'Krank' ? ('Krank (' + player.squatE1RM + ' kg)') : player.squat;
-    document.getElementById('modalCleanVal').innerText = player.clean === 'Krank' ? ('Krank (' + player.cleanE1RM + ' kg)') : player.clean;
+    document.getElementById('modalPlayerStatus').innerHTML = getStatusBadge(player);
+    LIFTS.forEach(function (l) {
+      var el = document.getElementById('modal' + l.charAt(0).toUpperCase() + l.slice(1) + 'Val');
+      var st = liftStyle(player[l]), note = liftNote(player[l], player[l + 'E1RM']);
+      el.innerText = player[l] + (note ? ' ' + note : '');
+      el.className = 'block text-sm sm:text-lg font-bold break-words ' + (st ? st.text : 'text-white');
+    });
     document.getElementById('playerModal').classList.remove('hidden');
 
     var hist = player.history || { bench: [], squat: [], clean: [] };
@@ -566,8 +624,8 @@
 
   function updateDashboardMetrics() {
     var total = activePlayersList.length;
-    var fullCount = activePlayersList.filter(function (p) { return p.status === 'FULL' || p.status === 'SICK'; }).length;
-    var rate = total ? Math.round((fullCount / total) * 100) : 0;
+    var sub = sumSubmissions(activePlayersList);
+    var rate = sub.required ? Math.round((sub.done / sub.required) * 100) : 0;
     document.getElementById('metricSubmissionRate').innerText = rate + '%';
     document.getElementById('metricProgressBar').style.width = rate + '%';
     document.getElementById('metricTotalPlayers').innerText = total;
